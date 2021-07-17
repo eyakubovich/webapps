@@ -44,11 +44,10 @@ import isMatch from 'design/utils/match';
 import { App } from 'teleport/services/apps';
 import AwsLaunchButton from './AwsLaunchButton';
 
-function AppList(props: Props) {
+export default function AppList(props: Props) {
   const { apps = [], pageSize = 100, searchValue } = props;
-
   const [sortDir, setSortDir] = useState<Record<string, string>>({
-    name: SortTypes.DESC,
+    name: SortTypes.ASC,
   });
 
   function sortAndFilter(search) {
@@ -128,23 +127,11 @@ function AddressCell(props) {
   return <Cell>https://{publicAddr}</Cell>;
 }
 
-function searchAndFilterCb(
-  targetValue: any[],
-  searchValue: string,
-  propName: string
-) {
-  if (propName === 'tags') {
-    return targetValue.some(item => {
-      return item.toLocaleUpperCase().indexOf(searchValue) !== -1;
-    });
-  }
-}
-
 function AppIconCell(props) {
   const { rowIndex, data } = props;
   const { name, awsConsole } = data[rowIndex];
   return (
-    <Cell align="left" style={{ width: '40px' }}>
+    <Cell style={{ width: '40px', userSelect: 'none' }}>
       <Flex
         height="32px"
         width="32px"
@@ -156,11 +143,7 @@ function AppIconCell(props) {
         {awsConsole ? (
           <AmazonAws fontSize={6} />
         ) : (
-          <Text
-            fontSize={3}
-            bold
-            style={{ textTransform: 'uppercase', userSelect: 'none' }}
-          >
+          <Text fontSize={3} bold caps>
             {name[0]}
           </Text>
         )}
@@ -224,6 +207,18 @@ function getIconColor(appName: string) {
   return colors[stringValue % 10];
 }
 
+function searchAndFilterCb(
+  targetValue: any[],
+  searchValue: string,
+  propName: string
+) {
+  if (propName === 'tags') {
+    return targetValue.some(item => {
+      return item.toLocaleUpperCase().indexOf(searchValue) !== -1;
+    });
+  }
+}
+
 type Props = {
   apps: App[];
   pageSize?: number;
@@ -235,5 +230,3 @@ const StyledTable = styled(Table)`
     vertical-align: middle;
   }
 `;
-
-export default AppList;
